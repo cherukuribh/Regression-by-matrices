@@ -1,0 +1,120 @@
+1)	Implement the matrix procedure described above, using numpy, for the general case of linear regression with one predictor variable and one response variable.
+Use matplotlib to plot a scatterplot and the fitted line. Also plot the “residuals vs fitted” graph. Calculate the 𝑅 2 value only using numpy. 
+Compare your results on the tiny example given above with the output from numpy.polyfit(). 
+You may find numpy.hstack(), numpy.ones(), numpy.reshape() and numpy.corrcoef() useful.
+	Implemented the matrix procedure using numpy matrix functions.
+Code:
+############### Method 1: Matrix Calculations using formula ##########
+X = np.array([[1, 0], [1, 3], [1, 6]])
+print(X)
+x = X[:,1]
+x = x.reshape((len(x), 1))
+print(x)
+Y = np.array([[1],[4],[5]])
+print(Y)
+X_t = X.T
+b = np.linalg.inv(X_t.dot(X)).dot(X_t.dot(Y))
+print(b)
+##predict using coefficients
+yhat = X.dot(b)
+print(yhat)
+#plot data and predictions
+plt.scatter(x,Y)
+plt.plot(x, yhat, color='red')
+plt.title("residuals vs fitted using formula for linear regression")
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.show()
+
+Output:
+[[1 0]
+ [1 3]
+ [1 6]]
+[[0]
+ [3]
+ [6]]
+[[1]
+ [4]
+ [5]]
+[[1.33333333]
+ [0.66666667]]
+[[1.33333333]
+ [3.33333333]
+ [5.33333333]]
+
+Plot:
+ 
+	Implemented linear regression using numpy with polyfit function
+Code:
+import numpy as np
+import matplotlib.pyplot as plt
+######## Method 2 Polyfit##############
+X = np.array([0,3,6])
+print(X)
+y = np.array([1,4,5])
+print(X)
+print(y)
+print(X.shape)
+print(y.shape)
+model = np.polyfit(X,y,1)[::-1]
+print(model)
+a = model[0]
+b = model[1]
+print('intercept:', a)
+print('slope:', b)
+print('y = ',a,'+',b,'x')
+
+y_pre = a + b * X
+print(y_pre)
+y_pred = y_pre.reshape(-1,1)
+print('predicted response:\n', y_pred)
+plt.figure()
+plt.scatter(X,y)
+plt.plot(X, y_pred)
+plt.grid()
+plt.title("residuals vs fitted using polyfit for linear regression")
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.show()
+
+Output:
+[0 3 6]
+[0 3 6]
+[1 4 5]
+(3,)
+(3,)
+[1.33333333 0.66666667]
+intercept: 1.3333333333333333
+slope: 0.6666666666666666
+y =  1.3333333333333333 + 0.6666666666666666 x
+[1.33333333 3.33333333 5.33333333]
+predicted response:
+ [[1.33333333]
+ [3.33333333]
+ [5.33333333]]
+
+Plot:
+ 
+	R square calculation using numpy:
+
+Code:
+#R_sq calculation 
+corr_matrix = np.corrcoef(y,y_pre)
+corr = corr_matrix[0,1]
+R_sq = corr**2
+print('coefficient of determination R_square:', R_sq)
+
+Output:
+coefficient of determination R_square: 0.9230769230769227
+
+	Comparison of two methods: Results of both methods are same
+Code:
+#comparisson of 2 methods
+print(np.isclose(yhat,y_pred))
+print("result of both methods are same")
+
+Output: 
+[[ True]
+ [ True]
+ [ True]]
+result of both methods are same
