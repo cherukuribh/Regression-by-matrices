@@ -1,0 +1,186 @@
+(a) Assemble this dataset from https://sunrise-sunset.org/search?location=coventry using the column “Day length”. 
+You must use at least two dates from each month from January 2021 through to February 2022
+
+Assembled the data from the given website. I collected 28 dates data (2 dates from each month) and assigned X to the list of days and assigned Y to 
+the corresponding minutes of day length
+
+X = np.array([2,17,34,47,63,74,95,108,126,139,158,171,189,203,219,232,250,264,278,291,307,319,336,348,366,385,401,424])
+Y = np.array([472,503,556,650,669,714,800,852,919,961,1003,1013,997,965,914,866,796,739,683,631,570,529,484,467,471,510,563,652])
+
+(b) Modify your Python matrix-based implementation from part (2) to fit quadratic (degree 2 polynomial), cubic (degree 3 polynomial) and quartic (degree 4 polynomial) regression models to this day length dataset. Give the equation of each fitted model, plot each of these fitted models on the same axes, calculate the 𝑅 2 value in each case. Compare your results with the output from numpy.polyfit().
+	Implemented the matrix procedure using numpy matrix functions for degrees 2,3 and 4 polynomial regression models
+Equation for 2nd degree polynomial :  y = 524.71273282 +  3.59327548  X -0.00955172 X2
+Equation for 3nd degree polynomial :  y = 303.92713259 +  10.277294 X -0.04938248 X2 + 0.00006267 X3
+Equation for 4nd degree polynomial :  y = 452.00155593 +  2.47199571  X + 0.03558636 X2 -0.00025081X3 + 0.00000037 X4
+
+Code:
+import numpy as np
+import matplotlib.pyplot as plt
+########## Method 1: Matrix multiplication Calculations ############
+X = np.array([2,17,34,47,63,74,95,108,126,139,158,171,189,203,219,232,250,264,278,291,307,319,336,348,366,385,401,424])
+print(X.shape)
+Y = np.array([472,503,556,650,669,714,800,852,919,961,1003,1013,997,965,914,866,796,739,683,631,570,529,484,467,471,510,563,652])
+print(Y.shape)
+x=X.reshape(28,1)
+print(x)
+y=Y.reshape(28,1)
+print(y)
+
+X_mat2=np.vstack((np.ones(len(X)), X,X*X)).T
+X_mat3=np.vstack((np.ones(len(X)), X,X*X,X*X*X)).T
+X_mat4=np.vstack((np.ones(len(X)), X,X*X,X*X*X,X*X*X*X)).T
+
+print(X_mat2)
+print(X_mat3)
+print(X_mat4)
+
+X_mat2T = X_mat2.T
+X_mat3T = X_mat3.T
+X_mat4T = X_mat4.T
+
+b2 = np.linalg.inv(X_mat2T.dot(X_mat2)).dot(X_mat2T.dot(y))
+b3 = np.linalg.inv(X_mat3T.dot(X_mat3)).dot(X_mat3T.dot(y))
+b4 = np.linalg.inv(X_mat4T.dot(X_mat4)).dot(X_mat4T.dot(y))
+
+print(b2)
+print(b3)
+print(b4)
+
+b2c = np.flip(b2.reshape(1,3))
+b3c = np.flip(b3.reshape(1,4))
+b4c = np.flip(b4.reshape(1,5))
+
+##predict using coefficients
+yhat2 = X_mat2.dot(b2)
+yhat3 = X_mat3.dot(b3)
+yhat4 = X_mat4.dot(b4)
+
+print(yhat2)
+print(yhat3)
+print(yhat4)
+
+#plot data and predictions
+plt.figure()
+plt.scatter(x,y)
+plt.plot(x, yhat2, color='blue')
+plt.plot(x, yhat3, color='g')
+plt.plot(x, yhat4, color='m')
+plt.show()
+
+Output:
+print(b2)
+[[524.71273282]
+ [  3.59327548]
+ [ -0.00955172]]
+
+print(b3)
+[[303.92713259]
+ [ 10.277294  ]
+ [ -0.04938248]
+ [  0.00006267]]
+
+print(b4)
+[[452.00155593]
+ [ 2.47199571]
+ [ 0.03558636]
+ [  -0.00025081]
+ [ 0.00000037]]
+
+Plot:
+ 
+	Implemented polynomial regression using numpy with polyfit function for degrees 2,3 and 4 regression models
+import numpy as np
+import matplotlib.pyplot as plt
+
+X = np.array([2,17,34,47,63,74,95,108,126,139,158,171,189,203,219,232,250,264,278,291,307,319,336,348,366,385,401,424])
+Y = np.array([472,503,556,650,669,714,800,852,919,961,1003,1013,997,965,914,866,796,739,683,631,570,529,484,467,471,510,563,652])
+print(X)
+print(Y)
+
+coef_deg2 = np.polyfit(X,Y,2)
+coef_deg3 = np.polyfit(X,Y,3)
+coef_deg4 = np.polyfit(X,Y,4)
+
+print(coef_deg2)
+print(coef_deg3)
+print(coef_deg4)
+
+print("Actual values",Y)
+y_pred2 = coef_deg2[0]*X*X + coef_deg2[1]*X + coef_deg2[2]
+print("predicted values for 2nd degree",y_pred2)
+y_pred3 = coef_deg3[0]*X*X*X + coef_deg3[1]*X*X + coef_deg3[2]*X + coef_deg3[3]
+print("predicted values for 3rd degree",y_pred3)
+y_pred4 = coef_deg4[0]*X*X*X*X + coef_deg4[1]*X*X*X + coef_deg4[2]*X*X + coef_deg4[3]*X +coef_deg4[4]
+print("predicted values for 4th degree",y_pred4)
+
+plt.figure()
+plt.scatter(X,Y)
+plt.plot(X,y_pred2,'g')
+plt.plot(X,y_pred3,'r')
+plt.plot(X,y_pred4,'y')
+plt.grid()
+plt.title("residuals vs fitted for degree 2,3,and 4 polynomials")
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.show()
+
+Output:
+print(coef_deg2)
+[ -0.00955172   3.59327548 524.71273282]
+print(coef_deg3)
+[  0.00006267  -0.04938248  10.277294   303.92713259]
+print(coef_deg4)
+[  0.00000037  -0.00025081   0.03558636   2.47199571 452.00155593]
+
+Plot:
+ 
+	R square calculation using numpy:
+Code:
+############## R_square ############
+########## 2 degree #######
+corr_matrix2 = np.corrcoef(Y,y_pred2)
+corr2 = corr_matrix2[0,1]
+R_sq2 = corr2**2
+print('coefficient of determination R square for degree 2:', R_sq2)
+########## 3 degree #######
+corr_matrix3 = np.corrcoef(Y,y_pred3)
+corr3 = corr_matrix3[0,1]
+R_sq3 = corr3**2
+print('coefficient of determination R square for degree 3:', R_sq3)
+########## 4 degree #######
+corr_matrix4 = np.corrcoef(Y,y_pred4)
+corr4 = corr_matrix4[0,1]
+R_sq4 = corr4**2
+print('coefficient of determination R square for degree 4:', R_sq4)
+
+output:
+coefficient of determination R square for degree 2: 0.5889326778936997
+coefficient of determination R square for degree 3: 0.8679732683480279
+coefficient of determination R square for degree 4: 0.9846905848211064
+
+	Comparison of two methods for degree 2,3 and 4 polynomial regression: results of both methods are same for 2nd , 3rd and 4th polynomial regression
+Code:
+#comparison of both predicted values
+print(np.isclose(coef_deg2,b2c))
+print("result of both methods of 2nd degree polynomial are equal")
+print(np.isclose(coef_deg3,b3c))
+print("result of both methods of 3rd degree polynomial are equal")
+print(np.isclose(coef_deg4,b4c))
+print("result of both methods of 4th degree polynomial are equal")
+
+output: 
+[[ True  True  True]]
+result of both methods of 2nd degree polynomial are equal
+[[ True  True  True  True]]
+result of both methods of 3rd degree polynomial are equal
+[[True  True  True  True True]]
+result of both methods of 4th degree polynomial are  equal 
+
+3(c):
+(c) Compare and thoroughly critique the fitted models. Give a recommendation on how these models could be improved.
+
+	 Polynomial regression is a method of finding an nth  degree polynomial function which is the closest approximation of our data points.
+	 simple line doesn’t fit to a data set, If we go on and try to find a quadratic, a cubic or a much higher degree function which might fit. 
+	It fits a wide range of curvatures.
+	It provides the best approximation of the relationship between two variables.
+	Increasing the degree of a polynomial will improve the in-sample fit up to a point. But when you have a data set with n observations, a polynomial of degree n−1 will pass through all of them exactly, and you can’t get any better than that.
