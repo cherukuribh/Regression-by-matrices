@@ -1,0 +1,112 @@
+2)	Modify your Python implementation from part (1) for to carry out the matrix procedure described above for a general case of “quadratic regression” with one predictor variable and one response variable. Compare your results on the tiny example given above with the output from numpy.polyfit().
+
+	Implemented the matrix procedure using numpy matrix functions.
+Code:
+import numpy as np
+import matplotlib.pyplot as plt
+########## Method 1: Matrix multiplication Calculations ############
+X = np.array([[1, 0, 0], [1, 3, 9], [1, 6, 36]])
+print(X)
+x = X[:,1]
+x = x.reshape((len(x), 1))
+print(x)
+Y = np.array([[1],[4],[5]])
+print(Y)
+X_t = X.T
+b = np.linalg.inv(X_t.dot(X)).dot(X_t.dot(Y))
+print(b)
+# predict using coefficients
+y1_pre = X.dot(b)
+print(y1_pre)
+# plot data and predictions
+plt.scatter(x,Y,color='blue')
+plt.plot(x,y1_pre, color='black')
+plt.title("residuals vs fitted using formula for quadratic regression")
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.show()
+Output:
+[[ 1  0  0]
+ [ 1  3  9]
+ [ 1  6 36]]
+[[0]
+ [3]
+ [6]]
+[[1]
+ [4]
+ [5]]
+[[ 1.        ]
+ [ 1.33333333]
+ [-0.11111111]]
+[[1.]
+ [4.]
+ [5.]]
+Plot:
+ 
+	Implemented linear regression using numpy with polyfit function
+
+   ########## method 2 : POLYFIT###############
+X = np.array([[0],[3],[6]])
+print(X)
+y = np.array([[1],[4],[5]])
+print(X)
+print(y)
+x = np.array([0,3,6])
+print(x)
+model1 = np.polyfit(x,y,2)[::-1]
+print(model1)
+a = model1[0]
+b = model1[1]
+c = model1[2]
+print('y = ',a,'+',b,'x','+',c,'x2')
+y_pre = a + b * X + c * X*X
+print(y_pre)
+y_pred = y_pre.reshape(-1,1)
+print('predicted response:\n', y_pred)
+plt.figure()
+plt.scatter(X,y,color ='c')
+plt.plot(X, y_pred,color = 'm')
+plt.xlim(-1,7)
+plt.ylim(0,6)
+plt.grid()
+plt.title("residuals vs fitted using polyfit for quadratic regression")
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.show()
+
+Output:
+[[0]
+ [3]
+ [6]]
+[[0]
+ [3]
+ [6]]
+[[1]
+ [4]
+ [5]]
+[0 3 6]
+[[ 1.        ]
+ [ 1.33333333]
+ [-0.11111111]]
+y =  [1.] + [1.33333333] x + [-0.11111111] x2
+[[1.]
+ [4.]
+ [5.]]
+predicted response:
+ [[1.]
+ [4.]
+ [5.]]
+
+Plot:
+ 
+	Comparison of two methods: results of both methods are same for quadratic regression
+Code:
+#comparisson of 2 methods in quadratic regression
+print(np.isclose(y1_pre,y_pred))
+print("result of both methods are equal")
+Output:
+[[ True]
+ [ True]
+ [ True]]
+result of both methods are equal
+
